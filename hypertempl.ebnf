@@ -1,0 +1,21 @@
+
+<template> ::= { <statement>* }
+
+<statement> ::= <text> | <variable> | <section> | <inverted_section> | <comment>
+
+<text> ::= <any_character>*
+
+<variable> ::= "{{" <variable_name> "}}"
+
+<variable_name> ::= <identifier>
+
+<section> ::= "{{#<section_name>}}" <template> "{{/<section_name>}}"
+
+<inverted_section> ::= "{{^<section_name>}}" <template> "{{/<section_name>}}"
+
+<comment> ::= "{{!" <text> "}}"
+
+<identifier> ::= <letter> (<letter> | <digit>)*
+<letter> ::= "a"..."z" | "A"..."Z" | "_"
+<digit> ::= "0"..."9"
+<any_character> ::= any character except for control characters (e.g., curly braces, brackets)
