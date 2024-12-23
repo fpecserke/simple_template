@@ -1,21 +1,51 @@
+<uppercase> <= "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" 
+<lowercase> <= "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" 
+<digit> <= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" 
 
-<template> ::= { <statement>* }
+<special_character> <= "[[" | "]]" | "{{" | "}}" | "<<" | ">>"
+<escape> <= "\"
+<back_slash> <= "\\"
 
-<statement> ::= <text> | <variable> | <section> | <inverted_section> | <comment>
+<letter> <= <uppercase> | <lowercase> | "_"
+<w_s> <=  (" " | "\t" | "\n" | "\r")*
+<any_character> <= <letter> | <digit> | <w_s>
 
-<text> ::= <any_character>*
+<identifier> <= <letter> (<letter> | <digit>)*
+<w_identifier> <= <w_s> <identifier> <w_s>
+<boolean> <= "true" | "false"
+<text> <= (<any_character>)*
+<string> <= "\"" <text> "\""
+<raw> <= "<<raw>>" <text> "<</raw>>"
+<number> <= (<digit>)+
 
-<variable> ::= "{{" <variable_name> "}}"
+<accessor> <= <identifier> ("." <identifier>)*
+<function_call> <= <identifier> "("  <w_expression>  ")"
+<expression> <=  ("!")?  <boolean> | <accessor> | <function_call> | <string> | <number> 
+<w_expression> <= <w_s> <expression> <w_s>
 
-<variable_name> ::= <identifier>
+<value_render> <= "${"  <w_expression>  "}"
+<template_render> <= "<<"  <w_identifier> ">>"
 
-<section> ::= "{{#<section_name>}}" <template> "{{/<section_name>}}"
+<conditional> <= <if> <w_statement> (<else>)? <end_condition>
+<if> <= "{{" <w_s> "if "  <w_expression>  "}}"
+<else> <= "{{" <w_s> "else " <w_s> "}}" <w_statement>
+<end_condition> <= "{{" <w_s> "end" <w_s> "}}"
 
-<inverted_section> ::= "{{^<section_name>}}" <template> "{{/<section_name>}}"
+<multicondition> <= <case_when> (<when>)* (<else>)? <end_condition>
+<case_when> <= "{{" <w_s> "case " <w_expression> ((" when " <w_expression> "}}" <w_statement>) | "}}")
+<when> <= "{{" <w_s> "when" <w_expression> "}}" <w_statement>
 
-<comment> ::= "{{!" <text> "}}"
 
-<identifier> ::= <letter> (<letter> | <digit>)*
-<letter> ::= "a"..."z" | "A"..."Z" | "_"
-<digit> ::= "0"..."9"
-<any_character> ::= any character except for control characters (e.g., curly braces, brackets)
+<statement> <=  <text> | <value_render> | <template_render> | <conditional> | <multicondition> | <iterator>
+<w_statement> <= <w_s> <statement> <w_s>
+
+<iterator> <= <list_comprehension> <w_statement> (<delimeter>)? <end_iter>
+<delimeter> <= "[[" <w_s> "separated by" <w_s> "]]"
+<list_comprehension> <= "[[" <w_s> "for " <w_identifier>  (", " <w_identifier>)? " in " <w_expression> "]]"
+<end_iter> <= "[[" <w_s> "end" <w_s> "]]"
+
+
+<template_definition> <= "template <<" <w_identifier> " " <w_expression> ">>" <w_statement> <template_end>
+<template_end> <= "<<" <w_s> "end" <w_s> ">>"
+
+<document> <= <w_s> (<template_definition> <w_s>)+

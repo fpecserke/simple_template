@@ -1,0 +1,39 @@
+
+template <<Hashmap map>>
+  {
+    [[ for key, val in map ]]
+        "${key}":  <<JsonValue val>>
+    [[ separated by ] ,
+    [[ end ]]
+  }
+<<end>>
+
+
+template <<Array array>>
+  [
+    [[ for element in array ]]
+        <<JsonValue element>>
+    [[ separated by ]] ,
+    [[ end ]]
+
+  ]
+<<end>>
+
+
+template <<JsonValue val>>
+  {{ case type(val) when "number" }}
+      ${val}
+  {{ when "bool" }}
+      ${val}
+
+  {{ when "string" }}
+      "${val}"
+
+  {{ when "array" }}
+      <<Array val>>
+
+  {{ when "map" }}
+      <<Hashmap val>>
+
+  {{ end }}
+<<end>

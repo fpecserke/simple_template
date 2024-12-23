@@ -23,10 +23,10 @@ Example:
 {{ end }}
 
 SELECT
-    {{ for key, col in columns }}
-        {{ col }} --{{ key }}
-    {{ end }}
-FROM {{ table_name }}
+    [[ for key, col in columns ]]
+        ${ col } --${ key }
+    [[ end ]]
+FROM ${ table_name }
 
 ```
 
@@ -76,5 +76,10 @@ input passed to it, along with the result of the query.
 Also you can specify any format for the metadata that supports nesting arrays
 and hashmaps/objects/dictionaries, as long as the engine supports it.
 
+The testing EBNF spec is in `hypertempl.ebnf`. The example templates are in
+the `examples` folder.
 
-The testing EBNF spec is in `hypertempl.ebnf`
+## TODO
+
+- [ ] Implementation in Rust - `winnow`
+- [ ] Implementation in Treesitter grammar

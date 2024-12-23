@@ -1,0 +1,97 @@
+template <<Template root>>
+    <div id="table-${root.NameClean}">
+
+        <!-- HEADER -->
+        <div  style="margin: 0.2em;">
+            <<RefreshButton>>
+        </div>
+
+        <!-- DATA -->
+        <table>
+            <thead> <<ColumnNames columns=root.Table.Columns>> </thead>
+            <tbody>
+              [[ for row in root.Table.Rows ]]
+                <<DataRow row root>>
+              [[ end ]]
+            </tbody>
+        </table>
+
+        <!-- FOOTER -->
+        <div style="margin: 0.2em;">
+            <div id="{{.NameClean}}-selected_data"></div>
+            <div id="{{$.NameClean}}-children"></div>
+        </div>
+
+
+    </div>
+<</Template>>
+
+
+template <<DataRow row root>>
+
+    <tr class="row"> 
+        [[ for i, column in root.Table.Columns ]]
+            <<TableCell column val=row[i]>>
+        [[ end ]] 
+        <td>
+            [[ for action in root.ActionsWithTemplate.Actions ]]
+                <button 
+                    hx-${ action.Action }="/select/${ action.Target }" 
+                    hx-include="closest tr" 
+                    hx-swap="innerHTML" 
+                    hx-target="#${ root.NameClean }-children"> ${ action.Action } </button> 
+            [[ end ]]
+        </td>
+    </tr>
+
+<</DataRow>>
+
+template <<TableCell column val>>
+  <!-- TODO: dynamically change type="text" to something else  -->
+  <td key="${column.Name}">
+      <input title="${ val }" type="text" value="${ val }" name="${ column.Name }" readonly="readonly" >
+  </td>
+<</TableCell>>
+
+
+template <<ColumnNames columns>>
+  <tr>
+      [[ for column in columns ]]
+      <th title='Type: ${ column.Type }'>
+          ${ column.Name }
+      </th>
+      [[end]]
+  </tr>
+<</ColumnNames>>
+
+
+template <<NewSubquery root>>
+  <div hx-include="this">
+      <button title="Add subquery" hx-post="/query" hx-target="#${ root.NameClean }-children">
+
+          +
+
+          <input style="display: none;" name="name" type="text" value="${ root.Name }-subquery" />
+          <input style="display: none;" name="parent" type="text" value="${ root.Name }" />
+          <input style="display: none;" name="query" type="text" value="select now();">
+      </button>
+  </div>
+<</NewSubquery>>
+
+
+
+template <<RefreshButton parameters root>
+    <!-- Refresh button -->
+    <form id="refresh_form${ root.NameClean }">
+
+        <button hx-get="/select/${ root.Name }" hx-swap="outerHTML" hx-target="#table-${ root.NameClean }" hx-include="#refresh_form${ root.NameClean }"  >
+            Refresh
+        </button>
+    
+        [[ for param, value in parameters ]]
+            <input type="hidden" name="${ param }" value="${ value }">
+        [[ end ]]
+
+    </form>
+
+<</RefreshButton>>
