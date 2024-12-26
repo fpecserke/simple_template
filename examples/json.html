@@ -3,10 +3,10 @@ template <<Hashmap map>>
   {
     [[ for key, val in map ]]
         "${key}":  <<JsonValue val>>
-    [[ separated by ] ,
+    [[ separated by ]] ,
     [[ end ]]
   }
-<<end>>
+<</Hashmap>>
 
 
 template <<Array array>>
@@ -17,7 +17,7 @@ template <<Array array>>
     [[ end ]]
 
   ]
-<<end>>
+<</Array>>
 
 
 template <<JsonValue val>>
@@ -36,4 +36,4 @@ template <<JsonValue val>>
       <<Hashmap val>>
 
   {{ end }}
-<<end>
+<</JsonValue>>

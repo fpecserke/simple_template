@@ -82,4 +82,10 @@ the `examples` folder.
 ## TODO
 
 - [ ] Implementation in Rust - `winnow`
+  - [x] working parser
+  - [x] testing including examples
+  - [ ] input inference
+  - [ ] rendering
+  - [ ] error handling - how to handle when someone creates an incorrect template
+  - [ ] updating specification
 - [ ] Implementation in Treesitter grammar
